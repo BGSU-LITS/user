@@ -1,0 +1,9 @@
+{% extends 'page.html.twig' %}
+
+{% block content %}
+{{ parent() }}
+
+<h2>Hello {{ auth.user.name_first }}!</h2>
+{{ settings.user.note_index|raw }}
+
+{% endblock %}

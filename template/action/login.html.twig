@@ -1,0 +1,23 @@
+{% set title = 'Log In' %}
+{% extends 'page.html.twig' %}
+
+{% block content %}
+{{ parent() }}
+<form method="post" action="{{ url_for('login') }}">
+    <div>
+        <label for="username">Username:</label><br>
+        <input type="text" name="username" id="username" autofocus>
+    </div>
+    <div>
+        <label for="password">Password:</label><br>
+        <input type="password" name="password" id="password">
+    </div>
+    <p>
+{% if return %}
+        <input type="hidden" name="return" value="{{ return }}">
+{% endif %}
+        <input type="submit" value="Log In" class="button button-primary">
+    </p>
+</form>
+<p><a href="{{ url_for('password') }}">Change Password</a></p>
+{% endblock %}
