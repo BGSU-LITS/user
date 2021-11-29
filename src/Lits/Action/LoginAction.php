@@ -88,6 +88,10 @@ final class LoginAction extends AuthAction
             $this->redirect($url . '?return=' . \urlencode($return));
         }
 
+        if ($this->auth->isLoggedIn()) {
+            return $this->response;
+        }
+
         if (
             !isset($post['username']) ||
             !\is_string($post['username']) ||
