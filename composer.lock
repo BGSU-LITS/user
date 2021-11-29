@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "bgsu-lits/framework",
-            "version": "v1.7.0",
+            "version": "v1.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/BGSU-LITS/framework.git",
-                "reference": "35b9588a9238ea941cfd3a8ca116b50b7c783af3"
+                "reference": "6b63fff7c0e86a075d507b758c8394b9569d9a77"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/BGSU-LITS/framework/zipball/35b9588a9238ea941cfd3a8ca116b50b7c783af3",
-                "reference": "35b9588a9238ea941cfd3a8ca116b50b7c783af3",
+                "url": "https://api.github.com/repos/BGSU-LITS/framework/zipball/6b63fff7c0e86a075d507b758c8394b9569d9a77",
+                "reference": "6b63fff7c0e86a075d507b758c8394b9569d9a77",
                 "shasum": ""
             },
             "require": {
@@ -92,22 +92,22 @@
             "description": "Framework for applications based on Slim.",
             "support": {
                 "issues": "https://github.com/BGSU-LITS/framework/issues",
-                "source": "https://github.com/BGSU-LITS/framework/tree/v1.7.0"
+                "source": "https://github.com/BGSU-LITS/framework/tree/v1.7.1"
             },
-            "time": "2021-11-23T15:36:10+00:00"
+            "time": "2021-11-29T14:32:11+00:00"
         },
         {
             "name": "bgsu-lits/framework-auth",
-            "version": "v1.0.0",
+            "version": "v1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/BGSU-LITS/framework-auth.git",
-                "reference": "5738755c897b29a4c53d62caef717355dcc62b22"
+                "reference": "186166b70d44c114e51a06d3da9948c347115012"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/BGSU-LITS/framework-auth/zipball/5738755c897b29a4c53d62caef717355dcc62b22",
-                "reference": "5738755c897b29a4c53d62caef717355dcc62b22",
+                "url": "https://api.github.com/repos/BGSU-LITS/framework-auth/zipball/186166b70d44c114e51a06d3da9948c347115012",
+                "reference": "186166b70d44c114e51a06d3da9948c347115012",
                 "shasum": ""
             },
             "require": {
@@ -181,9 +181,9 @@
             "description": "Auth for LITS Framework.",
             "support": {
                 "issues": "https://github.com/BGSU-LITS/framework-auth/issues",
-                "source": "https://github.com/BGSU-LITS/framework-auth/tree/v1.0.0"
+                "source": "https://github.com/BGSU-LITS/framework-auth/tree/v1.0.1"
             },
-            "time": "2021-11-23T19:05:13+00:00"
+            "time": "2021-11-29T14:32:49+00:00"
         },
         {
             "name": "bgsu-lits/framework-database",
@@ -4397,16 +4397,16 @@
         },
         {
             "name": "twig/twig",
-            "version": "v3.3.3",
+            "version": "v3.3.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "a27fa056df8a6384316288ca8b0fa3a35fdeb569"
+                "reference": "65cb6f0b956485e1664f13d023c55298a4bb59ca"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/a27fa056df8a6384316288ca8b0fa3a35fdeb569",
-                "reference": "a27fa056df8a6384316288ca8b0fa3a35fdeb569",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/65cb6f0b956485e1664f13d023c55298a4bb59ca",
+                "reference": "65cb6f0b956485e1664f13d023c55298a4bb59ca",
                 "shasum": ""
             },
             "require": {
@@ -4457,7 +4457,7 @@
             ],
             "support": {
                 "issues": "https://github.com/twigphp/Twig/issues",
-                "source": "https://github.com/twigphp/Twig/tree/v3.3.3"
+                "source": "https://github.com/twigphp/Twig/tree/v3.3.4"
             },
             "funding": [
                 {
@@ -4469,7 +4469,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-09-17T08:44:23+00:00"
+            "time": "2021-11-25T13:46:55+00:00"
         },
         {
             "name": "ulrichsg/getopt-php",
@@ -5575,12 +5575,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "77e3164498038272fa04997a9a8bab22f1d665ab"
+                "reference": "6f99479932347855a56d07958f3ac52e8261dda3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/77e3164498038272fa04997a9a8bab22f1d665ab",
-                "reference": "77e3164498038272fa04997a9a8bab22f1d665ab",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/6f99479932347855a56d07958f3ac52e8261dda3",
+                "reference": "6f99479932347855a56d07958f3ac52e8261dda3",
                 "shasum": ""
             },
             "conflict": {
@@ -5812,8 +5812,8 @@
                 "scheb/two-factor-bundle": ">=0,<3.26|>=4,<4.11",
                 "sensiolabs/connect": "<4.2.3",
                 "serluck/phpwhois": "<=4.2.6",
-                "shopware/core": "<=6.4.3",
-                "shopware/platform": "<=6.4.3",
+                "shopware/core": "<=6.4.6",
+                "shopware/platform": "<=6.4.6",
                 "shopware/production": "<=6.3.5.2",
                 "shopware/shopware": "<5.7.6",
                 "showdoc/showdoc": "<=2.9.12",
@@ -5991,7 +5991,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-11-24T10:16:07+00:00"
+            "time": "2021-11-24T20:15:37+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -6846,7 +6846,6 @@
                     "type": "github"
                 }
             ],
-            "abandoned": true,
             "time": "2020-09-28T06:45:17+00:00"
         },
         {
