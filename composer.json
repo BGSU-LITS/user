@@ -75,6 +75,8 @@
         "post-update-cmd": [
             "@reset-cache"
         ],
+        "migration": "phoenix",
+        "migration-create": "phoenix create --template migration.template",
         "reset-cache": "rm -rf ./cache/*"
     },
     "scripts-descriptions": {
