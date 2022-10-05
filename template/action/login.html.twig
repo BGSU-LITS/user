@@ -4,19 +4,19 @@
 {% block content %}
 {{ parent() }}
 <form method="post" action="{{ url_for('login') }}">
-    <div>
+    <p>
         <label for="username">Username:</label><br>
         <input type="text" name="username" id="username" autofocus>
-    </div>
-    <div>
+    </p>
+    <p>
         <label for="password">Password:</label><br>
         <input type="password" name="password" id="password">
-    </div>
+    </p>
     <p>
 {% if return %}
         <input type="hidden" name="return" value="{{ return }}">
 {% endif %}
-        <input type="submit" value="Log In" class="button button-primary">
+        <button type="submit" class="bgsu_common_button bgsu_common_button__arrow bgsu_common_button__large bgsu_common_button__primary">Log In</button>
     </p>
 </form>
 <p><a href="{{ url_for('password') }}">Change Password</a></p>
