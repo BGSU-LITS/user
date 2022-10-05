@@ -12,6 +12,8 @@ use Slim\Http\ServerRequest;
 
 final class LoginAction extends AuthAction
 {
+    use PostValueTrait;
+
     /** @throws HttpInternalServerErrorException */
     public function action(): void
     {
@@ -24,7 +26,6 @@ final class LoginAction extends AuthAction
                 $this->redirect();
 
                 if (
-                    isset($context['return']) &&
                     \is_string($context['return']) &&
                     $context['return'] !== ''
                 ) {
@@ -59,12 +60,6 @@ final class LoginAction extends AuthAction
     ): Response {
         $this->setup($request, $response, $data);
 
-        $post = $this->request->getParsedBody();
-
-        if (!\is_array($post)) {
-            throw new HttpInternalServerErrorException($this->request);
-        }
-
         try {
             $url = $this->routeCollector->getRouteParser()->urlFor('login');
         } catch (\Throwable $exception) {
@@ -77,54 +72,49 @@ final class LoginAction extends AuthAction
 
         $this->redirect($url);
 
-        $return = null;
+        $return = $this->postValue('return');
 
-        if (
-            isset($post['return']) &&
-            \is_string($post['return']) &&
-            $post['return'] !== ''
-        ) {
-            $return = $post['return'];
+        if (!\is_null($return)) {
             $this->redirect($url . '?return=' . \urlencode($return));
         }
 
-        if ($this->auth->isLoggedIn()) {
-            return $this->response;
+        if (!$this->auth->isLoggedIn()) {
+            $this->postLogin($return);
         }
 
-        if (
-            !isset($post['username']) ||
-            !\is_string($post['username']) ||
-            $post['username'] === ''
-        ) {
+        return $this->response;
+    }
+
+    /** @throws HttpInternalServerErrorException */
+    private function postLogin(?string $return): void
+    {
+        $username = $this->postValue('username');
+
+        if (\is_null($username)) {
             $this->message('failure', 'A username must be specified.');
 
-            return $this->response;
+            return;
         }
 
-        if (
-            !isset($post['password']) ||
-            !\is_string($post['password']) ||
-            $post['password'] === ''
-        ) {
+        $password = $this->postValue('password');
+
+        if (\is_null($password)) {
             $this->message('failure', 'A password must be specified.');
 
-            return $this->response;
+            return;
         }
 
         try {
-            $this->auth->login($post['username'], $post['password']);
+            $this->auth->login($username, $password);
             $this->redirect($return);
         } catch (LoginException $exception) {
             if ($exception->getCode() === LoginException::CANCELLED) {
                 $this->message('failure', $exception->getMessage() . '.');
 
-                return $this->response;
+                return;
             }
 
             $this->message('failure', 'The username or password is invalid.');
         }
-
-        return $this->response;
     }
 }

@@ -10,12 +10,12 @@
     ],
     "require": {
         "php": "^7.4",
-        "ext-filter": "*",
         "ext-PDO": "*",
+        "ext-filter": "*",
         "ext-hash": "*",
-        "bgsu-lits/framework": "^1.7.0",
-        "bgsu-lits/framework-auth": "^1.0.0",
-        "bgsu-lits/framework-database": "^1.0.0",
+        "bgsu-lits/framework": "^1.10.0",
+        "bgsu-lits/framework-auth": "^1.2.0",
+        "bgsu-lits/framework-database": "^1.2.0",
         "bgsu-lits/framework-mail": "^1.0.0",
         "jasny/auth": "^2.2",
         "slim/http": "^1.1",
@@ -27,22 +27,36 @@
         "phpunit/phpunit": "^9",
         "roave/security-advisories": "dev-master"
     },
+    "replace": {
+        "ext-sodium": "*",
+        "ext-zip": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Lits\\": "src/Lits"
+        },
+        "exclude-from-classmap": [
+            "/src/Lits/Test/"
+        ]
+    },
     "config": {
+        "allow-plugins": {
+            "bamarni/composer-bin-plugin": true,
+            "neronmoon/scriptsdev": true
+        },
         "sort-packages": true
     },
     "extra": {
+        "bamarni-bin": {
+            "bin-links": true,
+            "forward-command": true
+        },
         "scripts-dev": {
             "phpcbf": "phpcbf ./ --standard=phpcs.xml",
             "phpcs": "phpcs ./ --standard=phpcs.xml",
             "phplint": "phplint ./ --exclude=vendor",
             "phpstan": "phpstan analyse -c phpstan.neon",
             "phpunit": "phpunit -c phpunit.xml",
-            "post-install-cmd": [
-                "@composer bin all install --ansi"
-            ],
-            "post-update-cmd": [
-                "@composer bin all update --ansi"
-            ],
             "psalm": "psalm --config=psalm.xml",
             "test": [
                 "@phplint",
@@ -54,14 +68,6 @@
             "twigcs": "twigcs ./template"
         }
     },
-    "autoload": {
-        "psr-4": {
-            "Lits\\": "src/Lits"
-        },
-        "exclude-from-classmap": [
-            "/src/Lits/Test/"
-        ]
-    },
     "scripts": {
         "post-install-cmd": [
             "@reset-cache"
@@ -69,8 +75,6 @@
         "post-update-cmd": [
             "@reset-cache"
         ],
-        "migration": "phoenix",
-        "migration-create": "phoenix create --template migration.template",
         "reset-cache": "rm -rf ./cache/*"
     },
     "scripts-descriptions": {

@@ -22,6 +22,8 @@ use Slim\Http\ServerRequest;
 
 final class PasswordAction extends AuthAction
 {
+    use PostValueTrait;
+
     private Mail $mail;
 
     public function __construct(AuthActionService $service, Mail $mail)
@@ -74,23 +76,21 @@ final class PasswordAction extends AuthAction
     ): Response {
         $this->setup($request, $response, $data);
 
-        $post = $this->request->getParsedBody();
+        $token = $this->postValue('token');
 
-        if (!\is_array($post)) {
-            throw new HttpInternalServerErrorException($this->request);
-        }
-
-        if (isset($post['token'])) {
-            $this->postUpdate($post);
+        if (!\is_null($token)) {
+            $this->postUpdate($token);
 
             return $this->response;
         }
 
-        $this->redirectPassword();
+        $this->redirectToken();
+
+        $username = $this->postValue('username');
 
         if (
-            !isset($post['username']) ||
-            \filter_var($post['username'], \FILTER_VALIDATE_EMAIL) === false
+            \is_null($username) ||
+            \filter_var($username, \FILTER_VALIDATE_EMAIL) === false
         ) {
             $this->message(
                 'failure',
@@ -102,7 +102,7 @@ final class PasswordAction extends AuthAction
 
         try {
             $user = UserData::fromUsername(
-                (string) $post['username'],
+                $username,
                 $this->settings,
                 $this->database
             );
@@ -115,34 +115,7 @@ final class PasswordAction extends AuthAction
         }
 
         if ($user instanceof UserData) {
-            try {
-                $expire = new DateTimeImmutable('+1 hour');
-            } catch (\Throwable $exception) {
-                throw new HttpInternalServerErrorException(
-                    $this->request,
-                    'Could not create token expiration datetime',
-                    $exception
-                );
-            }
-
-            $token = $this->auth->confirm('password')
-                ->getToken($user, $expire);
-
-            $message = $this->mail->message()
-                ->to($user->username)
-                ->subject('Change Password')
-                ->htmlTemplate('mail/password.html.twig')
-                ->context(['token' => $token]);
-
-            try {
-                $this->mail->send($message);
-            } catch (FailedSendingException $exception) {
-                throw new HttpInternalServerErrorException(
-                    $this->request,
-                    'Could not send password confirmation email',
-                    $exception
-                );
-            }
+            $this->sendToken($user);
         }
 
         $this->message(
@@ -153,49 +126,20 @@ final class PasswordAction extends AuthAction
         return $this->response;
     }
 
-    /** @throws HttpInternalServerErrorException */
-    private function confirmToken(string $token): ?UserData
+    /** @throws HttpInternalServerErrorException*/
+    private function postUpdate(string $token): void
     {
-        try {
-            $user = $this->auth
-                ->confirm('password')
-                ->from($token);
+        $user = $this->confirmToken($token);
 
-            if ($user instanceof UserData) {
-                return $user;
-            }
-        } catch (InvalidTokenException $exception) {
-            $this->message(
-                'failure',
-                'The link to change your password is invalid or has ' .
-                ' expired. Please make another request.'
-            );
-
-            $this->redirectPassword();
-        }
-
-        return null;
-    }
-
-    /**
-     * @param mixed[] $post
-     * @throws HttpInternalServerErrorException
-     */
-    private function postUpdate(array $post): void
-    {
-        if (!isset($post['token']) || !\is_string($post['token'])) {
+        if (\is_null($user)) {
             return;
         }
 
-        $user = $this->confirmToken($post['token']);
+        $this->redirectToken($token);
 
-        if (!isset($user)) {
-            return;
-        }
+        $password = $this->postValue('password');
 
-        $this->redirectPassword($post['token']);
-
-        if (!isset($post['password']) || $post['password'] === '') {
+        if (\is_null($password)) {
             $this->message(
                 'failure',
                 'You must provide a valid new password.'
@@ -204,10 +148,7 @@ final class PasswordAction extends AuthAction
             return;
         }
 
-        if (
-            !isset($post['confirm']) ||
-            $post['password'] !== $post['confirm']
-        ) {
+        if ($password !== $this->postValue('confirm')) {
             $this->message(
                 'failure',
                 'You must confirm your new password.'
@@ -216,45 +157,12 @@ final class PasswordAction extends AuthAction
             return;
         }
 
-        try {
-            $token = TokenData::fromSubjectToken(
-                'password',
-                $post['token'],
-                $this->settings,
-                $this->database
-            );
-        } catch (InvalidDataException $exception) {
-            throw new HttpInternalServerErrorException(
-                $this->request,
-                'Could not find token',
-                $exception
-            );
-        }
-
-        if (\is_null($token)) {
-            $this->message(
-                'failure',
-                'The link to change your password is invalid or has ' .
-                ' expired. Please make another request.'
-            );
-
-            return;
-        }
-
-        try {
-            $token->remove();
-        } catch (\PDOException $exception) {
-            throw new HttpInternalServerErrorException(
-                $this->request,
-                'Could not remove token',
-                $exception
-            );
-        }
+        $this->removeToken($token);
 
         $this->auth->logout();
 
         try {
-            $user->setPassword((string) $post['password']);
+            $user->setPassword($password);
         } catch (InvalidConfigException | PasswordException $exception) {
             throw new HttpInternalServerErrorException(
                 $this->request,
@@ -282,7 +190,29 @@ final class PasswordAction extends AuthAction
     }
 
     /** @throws HttpInternalServerErrorException */
-    private function redirectPassword(?string $token = null): void
+    private function confirmToken(string $token): ?UserData
+    {
+        try {
+            $user = $this->auth->confirm('password')->from($token);
+
+            if ($user instanceof UserData) {
+                return $user;
+            }
+        } catch (InvalidTokenException $exception) {
+            $this->message(
+                'failure',
+                'The link to change your password is invalid or has ' .
+                ' expired. Please make another request.'
+            );
+
+            $this->redirectToken();
+        }
+
+        return null;
+    }
+
+    /** @throws HttpInternalServerErrorException */
+    private function redirectToken(?string $token = null): void
     {
         try {
             $url = $this->routeCollector->getRouteParser()->urlFor('password');
@@ -299,5 +229,76 @@ final class PasswordAction extends AuthAction
         }
 
         $this->redirect($url);
+    }
+
+    /** @throws HttpInternalServerErrorException */
+    private function removeToken(string $token): void
+    {
+        try {
+            $data = TokenData::fromSubjectToken(
+                'password',
+                $token,
+                $this->settings,
+                $this->database
+            );
+        } catch (InvalidDataException $exception) {
+            throw new HttpInternalServerErrorException(
+                $this->request,
+                'Could not find token',
+                $exception
+            );
+        }
+
+        if (\is_null($data)) {
+            $this->message(
+                'failure',
+                'The link to change your password is invalid or has ' .
+                ' expired. Please make another request.'
+            );
+
+            return;
+        }
+
+        try {
+            $data->remove();
+        } catch (\PDOException $exception) {
+            throw new HttpInternalServerErrorException(
+                $this->request,
+                'Could not remove token',
+                $exception
+            );
+        }
+    }
+
+    /** @throws HttpInternalServerErrorException */
+    private function sendToken(UserData $user): void
+    {
+        try {
+            $expire = new DateTimeImmutable('+1 hour');
+        } catch (\Throwable $exception) {
+            throw new HttpInternalServerErrorException(
+                $this->request,
+                'Could not create token expiration datetime',
+                $exception
+            );
+        }
+
+        $token = $this->auth->confirm('password')->getToken($user, $expire);
+
+        $message = $this->mail->message()
+            ->to($user->username)
+            ->subject('Change Password')
+            ->htmlTemplate('mail/password.html.twig')
+            ->context(['token' => $token]);
+
+        try {
+            $this->mail->send($message);
+        } catch (FailedSendingException $exception) {
+            throw new HttpInternalServerErrorException(
+                $this->request,
+                'Could not send password confirmation email',
+                $exception
+            );
+        }
     }
 }
