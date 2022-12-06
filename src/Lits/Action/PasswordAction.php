@@ -13,20 +13,20 @@ use Lits\Exception\FailedSendingException;
 use Lits\Exception\InvalidConfigException;
 use Lits\Exception\InvalidDataException;
 use Lits\Mail;
-use Lits\Service\AuthActionService;
+use Lits\Service\AuthDatabaseActionService;
 use Safe\DateTimeImmutable;
 use Safe\Exceptions\PasswordException;
 use Slim\Exception\HttpInternalServerErrorException;
 use Slim\Http\Response;
 use Slim\Http\ServerRequest;
 
-final class PasswordAction extends AuthAction
+final class PasswordAction extends AuthDatabaseAction
 {
     use PostValueTrait;
 
     private Mail $mail;
 
-    public function __construct(AuthActionService $service, Mail $mail)
+    public function __construct(AuthDatabaseActionService $service, Mail $mail)
     {
         parent::__construct($service);
 
