@@ -115,4 +115,25 @@ return function (Framework $framework): void {
 
     // A note to add to the change password request and email as HTML fragment.
     // $settings['user']->note_password = '';
+
+    // The ID of the SimpleSAMLphp authentication source.
+    // $settings['user']->ssp_auth_source = 'example';
+
+    // Attribute provided by SimpleSAMLphp to match with user data (e.g. uid).
+    // $settings['user']->ssp_attribute = 'uid';
+
+    // Format applied to the attribute via sprintf() before matching.
+    // Use %s as a placeholder for the attribute value.
+    // $settings['user']->ssp_format = '%s@example.edu';
+
+    // Title to display above the button to log in via SimpleSAMLphp.
+    // Will not be displayed if left blank.
+    // $settings['user']->ssp_title = 'Example Students, Faculty and Staff';
+
+    // Title to display above the default login form.
+    // Will not be displayed if left blank.
+    // $settings['user']->ssp_title_other = 'Other Users';
+
+    // Label for the button to log in via SimpleSAMLphp.
+    // $settings['user']->ssp_button = 'SSO Log In';
 };

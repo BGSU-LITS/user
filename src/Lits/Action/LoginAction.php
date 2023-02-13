@@ -6,11 +6,18 @@ namespace Lits\Action;
 
 use Jasny\Auth\LoginException;
 use Lits\Config\TemplateConfig;
+use Lits\Config\UserConfig;
+use Lits\Data\UserData;
+use SimpleSAML\Auth\Simple;
+use SimpleSAML\Auth\State as SimpleState;
+use SimpleSAML\Error\NoState as SimpleStateException;
 use Slim\Exception\HttpInternalServerErrorException;
 use Slim\Http\Response;
 use Slim\Http\ServerRequest;
 
-final class LoginAction extends AuthAction
+use function Safe\sprintf;
+
+final class LoginAction extends AuthDatabaseAction
 {
     use PostValueTrait;
 
@@ -21,6 +28,8 @@ final class LoginAction extends AuthAction
             $context = [
                 'return' => $this->request->getQueryParam('return'),
             ];
+
+            $this->ssp();
 
             if ($this->auth->isLoggedIn()) {
                 $this->redirect();
@@ -116,5 +125,97 @@ final class LoginAction extends AuthAction
 
             $this->message('failure', 'The username or password is invalid.');
         }
+    }
+
+    /** @throws HttpInternalServerErrorException */
+    private function ssp(): void
+    {
+        \assert($this->settings['user'] instanceof UserConfig);
+        $ssp = $this->settings['user']->ssp();
+
+        if (\is_null($ssp)) {
+            return;
+        }
+
+        $this->sspLogin(
+            $ssp,
+            $this->settings['user']->ssp_attribute,
+            $this->settings['user']->ssp_format
+        );
+
+        /** @var string $state */
+        $state = $this->request->getQueryParam('state', '');
+
+        if ($state === '') {
+            return;
+        }
+
+        try {
+            $this->sspState($state);
+        } catch (\Throwable $exception) {
+            throw new HttpInternalServerErrorException(
+                $this->request,
+                'Could not check SimpleSAMLphp state',
+                $exception
+            );
+        }
+    }
+
+    private function sspLogin(
+        Simple $ssp,
+        string $attribute,
+        string $format
+    ): void {
+        $attributes = $ssp->getAttributes();
+
+        if (
+            !isset($attributes[$attribute]) ||
+            !\is_array($attributes[$attribute])
+        ) {
+            return;
+        }
+
+        /** @var string $value */
+        foreach ($attributes[$attribute] as $value) {
+            $user = UserData::fromUsername(
+                sprintf($format, $value),
+                $this->settings,
+                $this->database
+            );
+
+            if ($user instanceof UserData) {
+                $this->auth->loginAs($user);
+            }
+        }
+    }
+
+    /** @throws \Exception */
+    private function sspState(string $state): void
+    {
+        try {
+            $logout = SimpleState::loadState($state, __NAMESPACE__);
+        } catch (SimpleStateException $exception) {
+            return;
+        }
+
+        if (
+            !isset($logout['saml:sp:LogoutStatus']) ||
+            !\is_array($logout['saml:sp:LogoutStatus'])
+        ) {
+            return;
+        }
+
+        $message = LogoutAction::MESSAGE_SUCCESS;
+        $status = $logout['saml:sp:LogoutStatus'];
+
+        if (
+            !isset($status['Code']) ||
+            $status['Code'] !== 'urn:oasis:names:tc:SAML:2.0:status:Success' ||
+            isset($status['SubCode'])
+        ) {
+            $message = LogoutAction::MESSAGE_FAILURE;
+        }
+
+        $this->messages[] = ['level' => 'warning', 'message' => $message];
     }
 }
