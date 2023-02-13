@@ -19,7 +19,7 @@
 <form method="post" action="{{ url_for('login') }}">
     <p>
         <label for="username">Username:</label><br>
-        <input type="text" name="username" id="username" autofocus>
+        <input type="text" name="username" id="username"{% if not settings.user.ssp %} autofocus{% endif %}>
     </p>
     <p>
         <label for="password">Password:</label><br>
