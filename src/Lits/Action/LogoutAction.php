@@ -45,12 +45,12 @@ final class LogoutAction extends AuthAction
             throw new HttpInternalServerErrorException(
                 $this->request,
                 'Could not determine URL for redirect.',
-                $exception
+                $exception,
             );
         }
 
-        /** @var string $return */
         $return = $this->request->getQueryParam('return', '');
+        \assert(\is_string($return));
 
         if ($return !== '') {
             $url .= '?return=' . \urlencode($return);

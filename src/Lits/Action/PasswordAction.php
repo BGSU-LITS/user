@@ -24,13 +24,11 @@ final class PasswordAction extends AuthDatabaseAction
 {
     use PostValueTrait;
 
-    private Mail $mail;
-
-    public function __construct(AuthDatabaseActionService $service, Mail $mail)
-    {
+    public function __construct(
+        AuthDatabaseActionService $service,
+        private Mail $mail,
+    ) {
         parent::__construct($service);
-
-        $this->mail = $mail;
     }
 
     /** @throws HttpInternalServerErrorException */
@@ -60,7 +58,7 @@ final class PasswordAction extends AuthDatabaseAction
             throw new HttpInternalServerErrorException(
                 $this->request,
                 null,
-                $exception
+                $exception,
             );
         }
     }
@@ -72,7 +70,7 @@ final class PasswordAction extends AuthDatabaseAction
     public function post(
         ServerRequest $request,
         Response $response,
-        array $data
+        array $data,
     ): Response {
         $this->setup($request, $response, $data);
 
@@ -94,7 +92,7 @@ final class PasswordAction extends AuthDatabaseAction
         ) {
             $this->message(
                 'failure',
-                'You must provide a valid email address.'
+                'You must provide a valid email address.',
             );
 
             return $this->response;
@@ -104,13 +102,13 @@ final class PasswordAction extends AuthDatabaseAction
             $user = UserData::fromUsername(
                 $username,
                 $this->settings,
-                $this->database
+                $this->database,
             );
         } catch (InvalidConfigException | InvalidDataException $exception) {
             throw new HttpInternalServerErrorException(
                 $this->request,
                 'Could not retrieve user',
-                $exception
+                $exception,
             );
         }
 
@@ -120,7 +118,7 @@ final class PasswordAction extends AuthDatabaseAction
 
         $this->message(
             'success',
-            'Check your email for instructions on how to change your password.'
+            'Check your email for details on how to change your password.',
         );
 
         return $this->response;
@@ -142,7 +140,7 @@ final class PasswordAction extends AuthDatabaseAction
         if (\is_null($password)) {
             $this->message(
                 'failure',
-                'You must provide a valid new password.'
+                'You must provide a valid new password.',
             );
 
             return;
@@ -151,7 +149,7 @@ final class PasswordAction extends AuthDatabaseAction
         if ($password !== $this->postValue('confirm')) {
             $this->message(
                 'failure',
-                'You must confirm your new password.'
+                'You must confirm your new password.',
             );
 
             return;
@@ -167,7 +165,7 @@ final class PasswordAction extends AuthDatabaseAction
             throw new HttpInternalServerErrorException(
                 $this->request,
                 'Could not set new password',
-                $exception
+                $exception,
             );
         }
 
@@ -177,7 +175,7 @@ final class PasswordAction extends AuthDatabaseAction
             throw new HttpInternalServerErrorException(
                 $this->request,
                 'Could not save user',
-                $exception
+                $exception,
             );
         }
 
@@ -185,7 +183,7 @@ final class PasswordAction extends AuthDatabaseAction
 
         $this->message(
             'success',
-            'Your password has been updated. Please log in to continue.'
+            'Your password has been updated. Please log in to continue.',
         );
     }
 
@@ -198,11 +196,11 @@ final class PasswordAction extends AuthDatabaseAction
             if ($user instanceof UserData) {
                 return $user;
             }
-        } catch (InvalidTokenException $exception) {
+        } catch (InvalidTokenException) {
             $this->message(
                 'failure',
                 'The link to change your password is invalid or has ' .
-                ' expired. Please make another request.'
+                ' expired. Please make another request.',
             );
 
             $this->redirectToken();
@@ -220,7 +218,7 @@ final class PasswordAction extends AuthDatabaseAction
             throw new HttpInternalServerErrorException(
                 $this->request,
                 'Could not determine URL for redirect.',
-                $exception
+                $exception,
             );
         }
 
@@ -239,13 +237,13 @@ final class PasswordAction extends AuthDatabaseAction
                 'password',
                 $token,
                 $this->settings,
-                $this->database
+                $this->database,
             );
         } catch (InvalidDataException $exception) {
             throw new HttpInternalServerErrorException(
                 $this->request,
                 'Could not find token',
-                $exception
+                $exception,
             );
         }
 
@@ -253,7 +251,7 @@ final class PasswordAction extends AuthDatabaseAction
             $this->message(
                 'failure',
                 'The link to change your password is invalid or has ' .
-                ' expired. Please make another request.'
+                ' expired. Please make another request.',
             );
 
             return;
@@ -265,7 +263,7 @@ final class PasswordAction extends AuthDatabaseAction
             throw new HttpInternalServerErrorException(
                 $this->request,
                 'Could not remove token',
-                $exception
+                $exception,
             );
         }
     }
@@ -279,7 +277,7 @@ final class PasswordAction extends AuthDatabaseAction
             throw new HttpInternalServerErrorException(
                 $this->request,
                 'Could not create token expiration datetime',
-                $exception
+                $exception,
             );
         }
 
@@ -297,7 +295,7 @@ final class PasswordAction extends AuthDatabaseAction
             throw new HttpInternalServerErrorException(
                 $this->request,
                 'Could not send password confirmation email',
-                $exception
+                $exception,
             );
         }
     }

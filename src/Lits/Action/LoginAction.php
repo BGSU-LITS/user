@@ -15,8 +15,6 @@ use Slim\Exception\HttpInternalServerErrorException;
 use Slim\Http\Response;
 use Slim\Http\ServerRequest;
 
-use function Safe\sprintf;
-
 final class LoginAction extends AuthDatabaseAction
 {
     use PostValueTrait;
@@ -53,7 +51,7 @@ final class LoginAction extends AuthDatabaseAction
             throw new HttpInternalServerErrorException(
                 $this->request,
                 null,
-                $exception
+                $exception,
             );
         }
     }
@@ -65,7 +63,7 @@ final class LoginAction extends AuthDatabaseAction
     public function post(
         ServerRequest $request,
         Response $response,
-        array $data
+        array $data,
     ): Response {
         $this->setup($request, $response, $data);
 
@@ -75,7 +73,7 @@ final class LoginAction extends AuthDatabaseAction
             throw new HttpInternalServerErrorException(
                 $this->request,
                 'Could not determine URL for redirect.',
-                $exception
+                $exception,
             );
         }
 
@@ -140,11 +138,11 @@ final class LoginAction extends AuthDatabaseAction
         $this->sspLogin(
             $ssp,
             $this->settings['user']->ssp_attribute,
-            $this->settings['user']->ssp_format
+            $this->settings['user']->ssp_format,
         );
 
-        /** @var string $state */
         $state = $this->request->getQueryParam('state', '');
+        \assert(\is_string($state));
 
         if ($state === '') {
             return;
@@ -156,7 +154,7 @@ final class LoginAction extends AuthDatabaseAction
             throw new HttpInternalServerErrorException(
                 $this->request,
                 'Could not check SimpleSAMLphp state',
-                $exception
+                $exception,
             );
         }
     }
@@ -164,7 +162,7 @@ final class LoginAction extends AuthDatabaseAction
     private function sspLogin(
         Simple $ssp,
         string $attribute,
-        string $format
+        string $format,
     ): void {
         $attributes = $ssp->getAttributes();
 
@@ -175,12 +173,13 @@ final class LoginAction extends AuthDatabaseAction
             return;
         }
 
-        /** @var string $value */
         foreach ($attributes[$attribute] as $value) {
+            \assert(\is_string($value));
+
             $user = UserData::fromUsername(
-                sprintf($format, $value),
+                \sprintf($format, $value),
                 $this->settings,
-                $this->database
+                $this->database,
             );
 
             if ($user instanceof UserData) {
@@ -194,7 +193,7 @@ final class LoginAction extends AuthDatabaseAction
     {
         try {
             $logout = SimpleState::loadState($state, __NAMESPACE__);
-        } catch (SimpleStateException $exception) {
+        } catch (SimpleStateException) {
             return;
         }
 

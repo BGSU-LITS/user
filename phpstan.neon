@@ -1,1 +1,10 @@
-vendor/bgsu-lits/framework/phpstan.neon
+parameters:
+  ignoreErrors:
+    - '# value type specified in iterable type GetOpt\\GetOpt\.#'
+  level: 8
+  paths:
+    - %currentWorkingDirectory%/src/
+  reportUnmatchedIgnoredErrors: false
+  scanDirectories:
+    - %currentWorkingDirectory%/../simplesamlphp/src/
+

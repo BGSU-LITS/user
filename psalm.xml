@@ -1,1 +1,48 @@
-vendor/bgsu-lits/framework/psalm.xml
+<?xml version="1.0"?>
+<psalm
+    cacheDirectory="cache/psalm"
+    checkForThrowsDocblock="true"
+    ensureArrayIntOffsetsExist="true"
+    ensureArrayStringOffsetsExist="true"
+    errorLevel="1"
+    findUnusedBaselineEntry="true"
+    findUnusedVariablesAndParams="true"
+    findUnusedPsalmSuppress="true"
+    findUnusedCode="false"
+    ignoreInternalFunctionFalseReturn="false"
+    ignoreInternalFunctionNullReturn="false"
+    resolveFromConfigFile="false"
+    sealAllMethods="true"
+    strictBinaryOperands="true"
+>
+    <issueHandlers>
+        <MissingThrowsDocblock>
+            <errorLevel type="suppress">
+                <directory name="src/Lits/Test" />
+            </errorLevel>
+        </MissingThrowsDocblock>
+        <PropertyNotSetInConstructor>
+            <errorLevel type="suppress">
+                <directory name="src/Lits/Data" />
+            </errorLevel>
+        </PropertyNotSetInConstructor>
+        <UnusedClosureParam>
+            <errorLevel type="suppress">
+                <file name="src/*.php" />
+            </errorLevel>
+        </UnusedClosureParam>
+    </issueHandlers>
+    <plugins>
+        <pluginClass class="Psalm\PhpUnitPlugin\Plugin"/>
+    </plugins>
+    <projectFiles>
+        <directory name="src"/>
+        <file name="*.php*"/>
+        <ignoreFiles>
+            <file name="../simplesamlphp/src/_autoload.php"/>
+        </ignoreFiles>
+    </projectFiles>
+    <extraFiles>
+        <directory name="../simplesamlphp/src/SimpleSAML"/>
+    </extraFiles>
+</psalm>
