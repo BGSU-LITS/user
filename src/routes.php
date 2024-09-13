@@ -19,7 +19,7 @@ return function (Framework $framework): void {
         ->setName('login');
 
     $framework->app()
-        ->post('/login', [LoginAction::class, 'post']);
+        ->post('/login', LoginAction::class . '::post');
 
     $framework->app()
         ->map(['GET', 'POST'], '/logout', LogoutAction::class)
@@ -30,5 +30,5 @@ return function (Framework $framework): void {
         ->setName('password');
 
     $framework->app()
-        ->post('/password', [PasswordAction::class, 'post']);
+        ->post('/password', PasswordAction::class . '::post');
 };
