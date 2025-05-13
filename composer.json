@@ -13,14 +13,14 @@
         "ext-PDO": "*",
         "ext-filter": "*",
         "ext-hash": "*",
-        "bgsu-lits/framework": "^2.1",
+        "bgsu-lits/framework": "^2.2",
         "bgsu-lits/framework-auth": "^2.2",
-        "bgsu-lits/framework-database": "^2.1",
-        "bgsu-lits/framework-mail": "^2.1",
+        "bgsu-lits/framework-database": "^2.2",
+        "bgsu-lits/framework-mail": "^2.2",
         "jasny/auth": "^2.2",
         "slim/http": "^1.1",
         "slim/slim": "^4.12",
-        "thecodingmachine/safe": "^2.5"
+        "thecodingmachine/safe": "^3.2"
     },
     "require-dev": {
         "bamarni/composer-bin-plugin": "^1.3",

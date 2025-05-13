@@ -8,6 +8,7 @@ use Lits\Package;
 
 final class ProjectPackage extends Package
 {
+    #[\Override]
     public function path(): string
     {
         return \dirname(\dirname(__DIR__));

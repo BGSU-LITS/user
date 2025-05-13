@@ -9,6 +9,7 @@ use Slim\Exception\HttpInternalServerErrorException;
 final class IndexAction extends AuthAction
 {
     /** @throws HttpInternalServerErrorException */
+    #[\Override]
     public function action(): void
     {
         try {

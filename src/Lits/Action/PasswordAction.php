@@ -15,7 +15,6 @@ use Lits\Exception\InvalidDataException;
 use Lits\Mail;
 use Lits\Service\AuthDatabaseActionService;
 use Safe\DateTimeImmutable;
-use Safe\Exceptions\PasswordException;
 use Slim\Exception\HttpInternalServerErrorException;
 use Slim\Http\Response;
 use Slim\Http\ServerRequest;
@@ -32,6 +31,7 @@ final class PasswordAction extends AuthDatabaseAction
     }
 
     /** @throws HttpInternalServerErrorException */
+    #[\Override]
     public function action(): void
     {
         $context = [
@@ -161,7 +161,7 @@ final class PasswordAction extends AuthDatabaseAction
 
         try {
             $user->setPassword($password);
-        } catch (InvalidConfigException | PasswordException $exception) {
+        } catch (InvalidConfigException $exception) {
             throw new HttpInternalServerErrorException(
                 $this->request,
                 'Could not set new password',

@@ -9,6 +9,7 @@
     findUnusedVariablesAndParams="true"
     findUnusedPsalmSuppress="true"
     findUnusedCode="false"
+    findUnusedIssueHandlerSuppression="false"
     ignoreInternalFunctionFalseReturn="false"
     ignoreInternalFunctionNullReturn="false"
     resolveFromConfigFile="false"

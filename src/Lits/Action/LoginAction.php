@@ -20,6 +20,7 @@ final class LoginAction extends AuthDatabaseAction
     use PostValueTrait;
 
     /** @throws HttpInternalServerErrorException */
+    #[\Override]
     public function action(): void
     {
         try {

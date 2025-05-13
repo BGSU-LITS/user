@@ -16,6 +16,7 @@ final class LogoutAction extends AuthAction
         'Could not logout from all sessions, please close your browser.';
 
     /** @throws HttpInternalServerErrorException */
+    #[\Override]
     public function action(): void
     {
         $this->auth->logout();
